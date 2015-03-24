@@ -32,10 +32,7 @@ require 'dispatcher' unless Rails::VERSION::MAJOR >= 3
 if Rails::VERSION::MAJOR >= 3
   ActionDispatch::Callbacks.to_prepare do
     require_dependency 'query'
-#    require_dependency 'issue_query'
     require_dependency 'issue'
-
- #   IssueQuery.add_available_filter("support_urls", {:type => :text})
   end
 else
   Dispatcher.to_prepare :redmine_simple_support do
@@ -44,9 +41,14 @@ else
   end
 end
 
-unless Query.included_modules.include?(RedmineSimpleSupport::Patches::QueryPatch)
-  Query.send(:include, RedmineSimpleSupport::Patches::QueryPatch)
+if Redmine::VERSION::MAJOR >= 3
+  unless IssueQuery.included_modules.include?(RedmineSimpleSupport::Patches::QueryPatch)
+    IssueQuery.send(:include, RedmineSimpleSupport::Patches::QueryPatch)
+  end
+else
+  unless Query.included_modules.include?(RedmineSimpleSupport::Patches::QueryPatch)
+    Query.send(:include, RedmineSimpleSupport::Patches::QueryPatch)
+  end
 end
-IssueQuery.send(:include, RedmineSimpleSupport::Patches::QueryPatch) if Redmine::VERSION::MAJOR >= 3
 
 Issue.send(:include, RedmineSimpleSupport::Patches::IssuePatch)

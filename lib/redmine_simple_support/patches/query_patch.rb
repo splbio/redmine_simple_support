@@ -20,8 +20,13 @@ module RedmineSimpleSupport
             end unless respond_to?(:add_available_column)
           end
 
-          Query.add_available_column(QueryColumn.new(:support_urls,
-                                                     :sortable => "#{Issue.table_name}.support_urls"))
+          if Redmine::VERSION::MAJOR >= 3
+            IssueQuery.add_available_column(QueryColumn.new(:support_urls,
+                                                            :sortable => "#{Issue.table_name}.support_urls"))
+          else
+            Query.add_available_column(QueryColumn.new(:support_urls,
+                                                       :sortable => "#{Issue.table_name}.support_urls"))
+          end
 
           if Redmine::VERSION::MAJOR >= 3
             alias_method_chain :initialize_available_filters, :support_urls
