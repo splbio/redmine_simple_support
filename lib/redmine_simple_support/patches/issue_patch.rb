@@ -8,10 +8,13 @@ module RedmineSimpleSupport
         base.class_eval do
           unloadable
 
-          journal_options_excluding_support_urls = self.vestal_journals_options.dup
-          journal_options_excluding_support_urls[:except] << "support_urls"
-          self.vestal_journals_options = journal_options_excluding_support_urls
-
+          # ChiliProject with AAJ
+          if self.respond_to? :vestal_journals_options
+            journal_options_excluding_support_urls = self.vestal_journals_options.dup
+            journal_options_excluding_support_urls[:except] << "support_urls"
+            self.vestal_journals_options = journal_options_excluding_support_urls
+          end
+          
           safe_attributes "support_urls" if lambda {|issue, user| user.allowed_to?(:edit_support_urls, issue.project) }
         end
       end
@@ -32,8 +35,11 @@ module RedmineSimpleSupport
           # Also set @issue_before_change's support urls so
           # #create_journal don't see the changes, thus preventing the
           # support_url changes from being logged. (Data exposure)
-          @issue_before_change.support_urls = v if @issue_before_change
-          self.write_attribute(:support_urls, v)
+          #
+          # Unable to work on Redmine 3.x with Journal @attributes_before_change,
+          # as there is no clean API to get in there
+          @issue_before_change.support_urls = v if @issue_before_change # Redmine 1.x, 2.x
+          write_attribute(:support_urls, v)
         end
 
         def support_urls_as_list

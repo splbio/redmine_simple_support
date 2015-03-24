@@ -27,10 +27,10 @@ module RedmineSimpleSupport
             list
           end
           
-          inner_section << content_tag(:table, items, :style => 'width: 100%')
+          inner_section << content_tag(:table, items.html_safe, :style => 'width: 100%')
         end
         
-        html << content_tag(:div, inner_section, :class => 'support-urls')
+        html << content_tag(:div, inner_section.html_safe, :class => 'support-urls')
 
         return html
       end

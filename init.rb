@@ -27,14 +27,25 @@ require 'redmine_simple_support/hooks/view_issues_form_details_bottom_hook'
 require 'redmine_simple_support/hooks/view_issues_show_description_bottom_hook'
 require 'redmine_simple_support/hooks/controller_issues_edit_before_save_hook'
 
-require 'dispatcher'
-Dispatcher.to_prepare :redmine_simple_support do
+require 'dispatcher' unless Rails::VERSION::MAJOR >= 3
 
-  require_dependency 'query'
-  unless Query.included_modules.include?(RedmineSimpleSupport::Patches::QueryPatch)
-    Query.send(:include, RedmineSimpleSupport::Patches::QueryPatch)
+if Rails::VERSION::MAJOR >= 3
+  ActionDispatch::Callbacks.to_prepare do
+    require_dependency 'query'
+#    require_dependency 'issue_query'
+    require_dependency 'issue'
+
+ #   IssueQuery.add_available_filter("support_urls", {:type => :text})
   end
-
-  require_dependency 'issue'
-  Issue.send(:include, RedmineSimpleSupport::Patches::IssuePatch)
+else
+  Dispatcher.to_prepare :redmine_simple_support do
+    require_dependency 'query'
+    require_dependency 'issue'
+  end
 end
+
+unless Query.included_modules.include?(RedmineSimpleSupport::Patches::QueryPatch)
+  Query.send(:include, RedmineSimpleSupport::Patches::QueryPatch) unless Rails::VERSION::MAJOR >= 3
+end
+
+ Issue.send(:include, RedmineSimpleSupport::Patches::IssuePatch)

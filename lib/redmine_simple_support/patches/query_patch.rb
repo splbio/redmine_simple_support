@@ -22,7 +22,12 @@ module RedmineSimpleSupport
           Query.add_available_column(QueryColumn.new(:support_urls,
                                                      :sortable => "#{Issue.table_name}.support_urls"))
 
-          alias_method_chain :available_filters, :support_urls
+          # Redmine 3.x API
+          if new.respond_to?(:add_available_filter)
+#            IssueQuery.add_available_filter("support_urls", {:type => :text})
+          else
+            alias_method_chain :available_filters, :support_urls
+          end
         end
       end
 
