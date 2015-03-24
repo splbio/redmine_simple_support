@@ -1,3 +1,5 @@
+require_dependency 'issue_query'
+
 module RedmineSimpleSupport
   module Patches
     module QueryPatch
@@ -7,7 +9,6 @@ module RedmineSimpleSupport
         base.send(:include, InstanceMethods)
         base.class_eval do
           unloadable
-
           class << self
             # Redmine 0.9 compatibility patches
             def available_columns=(v)
@@ -22,9 +23,8 @@ module RedmineSimpleSupport
           Query.add_available_column(QueryColumn.new(:support_urls,
                                                      :sortable => "#{Issue.table_name}.support_urls"))
 
-          # Redmine 3.x API
-          if new.respond_to?(:add_available_filter)
-#            IssueQuery.add_available_filter("support_urls", {:type => :text})
+          if Redmine::VERSION::MAJOR >= 3
+            alias_method_chain :initialize_available_filters, :support_urls
           else
             alias_method_chain :available_filters, :support_urls
           end
@@ -43,6 +43,11 @@ module RedmineSimpleSupport
           }
           
           @available_filters = core_filters
+        end
+        def initialize_available_filters_with_support_urls
+          initialize_available_filters_without_support_urls
+
+          add_available_filter("support_urls", :type => :text)
         end
       end
     end

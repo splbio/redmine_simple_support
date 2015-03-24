@@ -45,7 +45,8 @@ else
 end
 
 unless Query.included_modules.include?(RedmineSimpleSupport::Patches::QueryPatch)
-  Query.send(:include, RedmineSimpleSupport::Patches::QueryPatch) unless Rails::VERSION::MAJOR >= 3
+  Query.send(:include, RedmineSimpleSupport::Patches::QueryPatch)
 end
+IssueQuery.send(:include, RedmineSimpleSupport::Patches::QueryPatch) if Redmine::VERSION::MAJOR >= 3
 
- Issue.send(:include, RedmineSimpleSupport::Patches::IssuePatch)
+Issue.send(:include, RedmineSimpleSupport::Patches::IssuePatch)
