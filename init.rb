@@ -26,6 +26,7 @@ end
 require 'redmine_simple_support/hooks/view_issues_form_details_bottom_hook'
 require 'redmine_simple_support/hooks/view_issues_show_description_bottom_hook'
 require 'redmine_simple_support/hooks/controller_issues_edit_before_save_hook'
+require 'redmine_simple_support/hooks/view_layouts_base_html_head_hook'
 
 require 'dispatcher' unless Rails::VERSION::MAJOR >= 3
 
