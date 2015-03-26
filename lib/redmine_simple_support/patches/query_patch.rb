@@ -22,7 +22,8 @@ module RedmineSimpleSupport
 
           if Redmine::VERSION::MAJOR >= 3
             IssueQuery.add_available_column(QueryColumn.new(:support_urls,
-                                                            :sortable => "#{Issue.table_name}.support_urls"))
+                                                            :sortable => "#{Issue.table_name}.support_urls",
+                                                            :inline => false))
           else
             Query.add_available_column(QueryColumn.new(:support_urls,
                                                        :sortable => "#{Issue.table_name}.support_urls"))
